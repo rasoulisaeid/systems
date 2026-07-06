@@ -1,0 +1,15 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+
+# Logs / local env
+*.log
+.env
+.env.local
+
+# Dependency dirs (only if you ever add a build step)
+node_modules/
+dist/

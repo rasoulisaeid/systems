@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Systems</title>
+  <meta name="description" content="A personal superapp that hosts your tools." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%236366f1' d='M16 2 30 16 16 30 2 16z'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand" id="brandHome" role="button" tabindex="0" title="Home">
+      <span class="brand-mark">&#9670;</span>
+      <span class="brand-name">Systems</span>
+    </div>
+    <div class="search-wrap">
+      <input id="search" class="search" type="search" placeholder="Search tools&hellip;  ( / )" autocomplete="off" spellcheck="false" />
+    </div>
+    <div class="topbar-actions">
+      <button id="themeToggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">&#127769;</button>
+    </div>
+  </header>
+
+  <main id="view" class="view" aria-live="polite"></main>
+
+  <footer class="footer"><span id="footNote"></span></footer>
+
+  <!-- load order matters: helpers first, registry, then the app -->
+  <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/registry.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
