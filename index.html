@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Systems</title>
-  <meta name="description" content="A personal superapp that hosts your tools." />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%236366f1' d='M16 2 30 16 16 30 2 16z'/%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%238b5cf6' d='M16 2 30 16 16 30 2 16z'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -14,22 +17,20 @@
       <span class="brand-mark">&#9670;</span>
       <span class="brand-name">Systems</span>
     </div>
-    <div class="search-wrap">
-      <input id="search" class="search" type="search" placeholder="Search tools&hellip;  ( / )" autocomplete="off" spellcheck="false" />
-    </div>
-    <div class="topbar-actions">
-      <button id="themeToggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">&#127769;</button>
-    </div>
+    <button id="settingsBtn" class="icon-btn" title="Settings" aria-label="Settings">
+      <span class="material-symbols-rounded">settings</span>
+    </button>
   </header>
 
   <main id="view" class="view" aria-live="polite"></main>
 
-  <footer class="footer"><span id="footNote"></span></footer>
-
-  <!-- load order matters: helpers first, registry, then the app -->
+  <!-- load order matters: store, sync, vault, tools, registry, then the app -->
   <script src="js/store.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/vault.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/router.js"></script>
+  <script src="js/tools/notes.js"></script>
   <script src="js/registry.js"></script>
   <script src="js/app.js"></script>
 </body>

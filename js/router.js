@@ -1,6 +1,7 @@
 /* Router — dead-simple hash router.
- *   #/           -> { route: "home" }
- *   #/t/<id>     -> { route: "tool", id }
+ *   #/            -> { route: "home" }
+ *   #/settings    -> { route: "settings" }
+ *   #/t/<id>      -> { route: "tool", id }
  */
 (function () {
   const subs = [];
@@ -8,9 +9,8 @@
   function parse() {
     const h = location.hash.replace(/^#\/?/, "");
     const parts = h.split("/").filter(Boolean);
-    if (parts[0] === "t" && parts[1]) {
-      return { route: "tool", id: decodeURIComponent(parts[1]) };
-    }
+    if (parts[0] === "settings") return { route: "settings", id: null };
+    if (parts[0] === "t" && parts[1]) return { route: "tool", id: decodeURIComponent(parts[1]) };
     return { route: "home", id: null };
   }
 
@@ -27,6 +27,7 @@
     start() { emit(); },
     go(hash) { location.hash = hash; },
     home: () => "#/",
+    settings: () => "#/settings",
     toolHash: (id) => "#/t/" + encodeURIComponent(id),
   };
 })();
