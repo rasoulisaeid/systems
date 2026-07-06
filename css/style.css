@@ -236,7 +236,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
     repeating-linear-gradient(to bottom, transparent 0 43px, #d7e3ef 43px 44px);
   background-repeat: repeat, no-repeat, repeat;
   padding: 0 28px 0 66px; /* text sits right of the red margin line */
-  font-family: inherit; font-size: 17px; line-height: 44px; color: var(--text);
+  font-family: "Nunito", ui-sans-serif, system-ui, sans-serif; /* same as the title */
+  font-weight: 700; font-size: 17px; line-height: 44px; color: var(--text);
   min-height: 660px; /* 15 lines */
 }
 .paper-body::placeholder { color: var(--border-2); }
