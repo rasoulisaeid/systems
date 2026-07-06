@@ -207,18 +207,39 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .round-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
 .round-btn.danger { color: var(--red); }
 .round-btn.danger:hover { background: var(--red-soft); }
-.editor { display: flex; flex-direction: column; }
-.note-title-input {
-  border: none; background: transparent; outline: none;
-  font-family: inherit; font-weight: 900; font-size: 27px; color: var(--text);
-  padding: 8px 2px; letter-spacing: -.01em;
+.editor { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+
+/* title box */
+.paper-title {
+  width: 100%; border: 2px solid var(--border); border-bottom-width: 3px; border-radius: 14px;
+  background: #fff; padding: 14px 18px; outline: none;
+  font-family: inherit; font-weight: 900; font-size: 20px; color: var(--text);
 }
-.note-body-input {
-  border: none; background: transparent; outline: none; resize: none;
-  font-family: inherit; font-size: 16.5px; line-height: 1.7; color: var(--soft);
-  padding: 6px 2px; min-height: 55vh;
+.paper-title:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-soft); }
+.paper-title::placeholder { color: var(--border-2); }
+
+/* body: ruled A4-style paper sheet.
+   Line rhythm is 44px (must match LINE_H in js/tools/notes.js); a page is
+   15 lines = 660px, marked by a stronger rule every page. */
+.paper {
+  background: #fff; border: 1px solid var(--border); border-radius: 6px;
+  padding: 26px 0; /* page top/bottom margins */
+  box-shadow: 0 10px 30px rgba(45, 45, 80, .10), 0 2px 0 rgba(45, 45, 80, .04);
 }
-.note-title-input::placeholder, .note-body-input::placeholder { color: var(--border-2); }
+.paper-body {
+  display: block; width: 100%;
+  border: none; outline: none; resize: none; overflow: hidden; /* height auto-grown by JS */
+  background-color: transparent;
+  background-image:
+    repeating-linear-gradient(to bottom, transparent 0 659px, rgba(45, 45, 80, .16) 659px 660px),
+    linear-gradient(to right, transparent 0 52px, #f3b0b0 52px 54px, transparent 54px),
+    repeating-linear-gradient(to bottom, transparent 0 43px, #d7e3ef 43px 44px);
+  background-repeat: repeat, no-repeat, repeat;
+  padding: 0 28px 0 66px; /* text sits right of the red margin line */
+  font-family: inherit; font-size: 17px; line-height: 44px; color: var(--text);
+  min-height: 660px; /* 15 lines */
+}
+.paper-body::placeholder { color: var(--border-2); }
 
 /* ── loading ────────────────────────────────────────── */
 .loading { display: grid; place-items: center; padding: 22vh 0; }

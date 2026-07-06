@@ -1,16 +1,21 @@
 /* Encrypted Notes — a private notebook.
  * Locked by the app password (set in Settings). Every note's title and body
  * are stored AES-GCM encrypted via window.Vault; nothing is readable on disk
- * without the password. */
+ * (or on Firebase) without the password. */
 window.NotesTool = function mount(container, ctx) {
   const h = ctx.UI.el;
   const clear = ctx.UI.clear;
   const Vault = window.Vault;
   const store = ctx.store;          // scoped to "notes"
 
-  let sessions = [];                // decrypted, in memory while unlocked
+  const LINE_H = 44;                 // must match .paper-body line-height in style.css
+  const LINES_PER_PAGE = 15;
+  const PAGE_H = LINE_H * LINES_PER_PAGE; // one A4-style page
+
+  let sessions = [];                 // decrypted, in memory while unlocked
   let saveTimer = null;
   let disposed = false;
+  let resizeHandler = null;
 
   /* ── persistence ─────────────────────────────────── */
   async function load() {
@@ -26,9 +31,14 @@ window.NotesTool = function mount(container, ctx) {
     }, 300);
   }
 
+  function dropResize() {
+    if (resizeHandler) { window.removeEventListener("resize", resizeHandler); resizeHandler = null; }
+  }
+
   /* ── screens ─────────────────────────────────────── */
   function render() {
     if (disposed) return;
+    dropResize();
     clear(container);
     if (!Vault.hasPassword()) return renderNoPassword();
     if (!Vault.isUnlocked())  return renderLock();
@@ -86,21 +96,35 @@ window.NotesTool = function mount(container, ctx) {
   function openNote(id) {
     const s = sessions.find((x) => x.id === id);
     if (!s) return render();
+    dropResize();
     clear(container);
 
-    const title = h("input", { class: "note-title-input", placeholder: "Title" });
-    const body  = h("textarea", { class: "note-body-input" });
+    const title = h("input", { class: "paper-title", placeholder: "Title" });
+    const body  = h("textarea", { class: "paper-body", spellcheck: "false" });
     title.value = s.title || "";
     body.value  = s.body || "";
-    title.addEventListener("input", () => { s.title = title.value; s.updatedAt = Date.now(); persist(); });
-    body.addEventListener("input",  () => { s.body  = body.value;  s.updatedAt = Date.now(); persist(); });
 
-    container.appendChild(h("div", { class: "editor-top" },
-      h("button", { class: "round-btn", title: "Back", onclick: render }, icon("arrow_back")),
-      h("button", { class: "round-btn danger", title: "Delete", onclick: () => deleteNote(id) }, icon("delete"))
+    // grow the sheet to fit the text, but never shorter than one full page
+    function grow() {
+      body.style.height = "auto";
+      body.style.height = Math.max(body.scrollHeight, PAGE_H) + "px";
+    }
+
+    title.addEventListener("input", () => { s.title = title.value; s.updatedAt = Date.now(); persist(); });
+    body.addEventListener("input",  () => { s.body  = body.value;  s.updatedAt = Date.now(); grow(); persist(); });
+
+    resizeHandler = grow;
+    window.addEventListener("resize", resizeHandler);
+
+    container.appendChild(h("div", { class: "editor" },
+      h("div", { class: "editor-top" },
+        h("button", { class: "round-btn", title: "Back", onclick: render }, icon("arrow_back")),
+        h("button", { class: "round-btn danger", title: "Delete", onclick: () => deleteNote(id) }, icon("delete"))
+      ),
+      title,
+      h("div", { class: "paper" }, body)
     ));
-    container.appendChild(h("div", { class: "editor" }, title, body));
-    setTimeout(() => (s.title ? body : title).focus(), 30);
+    setTimeout(() => { grow(); (s.title ? body : title).focus(); }, 30);
   }
 
   function newNote() {
@@ -131,7 +155,7 @@ window.NotesTool = function mount(container, ctx) {
 
   /* re-render if the vault gets locked / password changes while we're open */
   const unsub = Vault.onChange(() => render());
-  ctx.onCleanup(() => { disposed = true; clearTimeout(saveTimer); unsub(); });
+  ctx.onCleanup(() => { disposed = true; clearTimeout(saveTimer); dropResize(); unsub(); });
 
   /* boot */
   (async () => { if (Vault.isUnlocked()) await load(); render(); })();
