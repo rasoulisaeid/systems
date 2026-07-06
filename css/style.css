@@ -196,6 +196,11 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 /* ── editor ─────────────────────────────────────────── */
 .editor-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.line-counter {
+  font-size: 13px; font-weight: 800; color: var(--muted);
+  background: var(--card-2); border: 2px solid var(--border);
+  padding: 6px 14px; border-radius: 999px; user-select: none;
+}
 .round-btn {
   width: 44px; height: 44px; border-radius: 14px;
   background: var(--card); color: var(--soft);

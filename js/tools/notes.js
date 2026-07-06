@@ -104,10 +104,17 @@ window.NotesTool = function mount(container, ctx) {
     title.value = s.title || "";
     body.value  = s.body || "";
 
+    // live line counter (updates as the sheet grows)
+    const counter = h("span", { class: "line-counter" }, "");
+
     // grow the sheet to fit the text, but never shorter than one full page
     function grow() {
       body.style.height = "auto";
-      body.style.height = Math.max(body.scrollHeight, PAGE_H) + "px";
+      const contentH = body.scrollHeight;
+      body.style.height = Math.max(contentH, PAGE_H) + "px";
+      const lines = Math.max(1, Math.round(contentH / LINE_H));
+      const pages = Math.max(1, Math.ceil(lines / LINES_PER_PAGE));
+      counter.textContent = lines + (lines === 1 ? " line" : " lines") + (pages > 1 ? " · " + pages + " pages" : "");
     }
 
     title.addEventListener("input", () => { s.title = title.value; s.updatedAt = Date.now(); persist(); });
@@ -119,6 +126,7 @@ window.NotesTool = function mount(container, ctx) {
     container.appendChild(h("div", { class: "editor" },
       h("div", { class: "editor-top" },
         h("button", { class: "round-btn", title: "Back", onclick: render }, icon("arrow_back")),
+        counter,
         h("button", { class: "round-btn danger", title: "Delete", onclick: () => deleteNote(id) }, icon("delete"))
       ),
       title,
