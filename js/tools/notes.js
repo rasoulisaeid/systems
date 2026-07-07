@@ -99,22 +99,26 @@ window.NotesTool = function mount(container, ctx) {
     dropResize();
     clear(container);
 
-    const title = h("input", { class: "paper-title", placeholder: "Title" });
-    const body  = h("textarea", { class: "paper-body", spellcheck: "false" });
+    const title  = h("input", { class: "paper-title", placeholder: "Title" });
+    const gutter = h("div", { class: "line-gutter" });   // line numbers in the left margin
+    const body   = h("textarea", { class: "paper-body", spellcheck: "false" });
     title.value = s.title || "";
     body.value  = s.body || "";
 
-    // live line counter (updates as the sheet grows)
-    const counter = h("span", { class: "line-counter" }, "");
+    // keep one number per ruled line (min one full page)
+    function renderGutter(lineCount) {
+      const target = Math.max(LINES_PER_PAGE, lineCount);
+      if (gutter.childElementCount === target) return;
+      clear(gutter);
+      for (let i = 1; i <= target; i++) gutter.appendChild(h("div", { class: "ln" }, String(i)));
+    }
 
     // grow the sheet to fit the text, but never shorter than one full page
     function grow() {
       body.style.height = "auto";
       const contentH = body.scrollHeight;
       body.style.height = Math.max(contentH, PAGE_H) + "px";
-      const lines = Math.max(1, Math.round(contentH / LINE_H));
-      const pages = Math.max(1, Math.ceil(lines / LINES_PER_PAGE));
-      counter.textContent = lines + (lines === 1 ? " line" : " lines") + (pages > 1 ? " · " + pages + " pages" : "");
+      renderGutter(Math.max(1, Math.round(contentH / LINE_H)));
     }
 
     title.addEventListener("input", () => { s.title = title.value; s.updatedAt = Date.now(); persist(); });
@@ -126,11 +130,10 @@ window.NotesTool = function mount(container, ctx) {
     container.appendChild(h("div", { class: "editor" },
       h("div", { class: "editor-top" },
         h("button", { class: "round-btn", title: "Back", onclick: render }, icon("arrow_back")),
-        counter,
         h("button", { class: "round-btn danger", title: "Delete", onclick: () => deleteNote(id) }, icon("delete"))
       ),
       title,
-      h("div", { class: "paper" }, body)
+      h("div", { class: "paper" }, gutter, body)
     ));
     setTimeout(() => { grow(); (s.title ? body : title).focus(); }, 30);
   }

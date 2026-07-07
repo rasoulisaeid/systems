@@ -196,11 +196,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 /* ── editor ─────────────────────────────────────────── */
 .editor-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-.line-counter {
-  font-size: 13px; font-weight: 800; color: var(--muted);
-  background: var(--card-2); border: 2px solid var(--border);
-  padding: 6px 14px; border-radius: 999px; user-select: none;
-}
 .round-btn {
   width: 44px; height: 44px; border-radius: 14px;
   background: var(--card); color: var(--soft);
@@ -227,9 +222,21 @@ button { font: inherit; color: inherit; cursor: pointer; }
    Line rhythm is 44px (must match LINE_H in js/tools/notes.js); a page is
    15 lines = 660px, marked by a stronger rule every page. */
 .paper {
+  position: relative; /* positioning context for the line-number gutter */
   background: #fff; border: 1px solid var(--border); border-radius: 6px;
   padding: 26px 0; /* page top/bottom margins */
   box-shadow: 0 10px 30px rgba(45, 45, 80, .10), 0 2px 0 rgba(45, 45, 80, .04);
+}
+/* line numbers in the left margin, aligned to each 44px ruled line, sitting
+   left of the red margin (which the .paper-body draws at x = 52–54px) */
+.line-gutter {
+  position: absolute; top: 26px; left: 0; width: 46px;
+  pointer-events: none;
+  font-family: "Nunito", ui-sans-serif, system-ui, sans-serif;
+}
+.line-gutter .ln {
+  height: 44px; line-height: 44px; text-align: right; padding-right: 12px;
+  font-size: 12.5px; font-weight: 800; color: var(--border-2);
 }
 .paper-body {
   display: block; width: 100%;
