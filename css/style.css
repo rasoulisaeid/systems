@@ -27,7 +27,7 @@
 
   --shadow-md: 0 6px 20px rgba(45, 45, 80, .07);
 
-  --maxw: 720px;
+  --maxw: 760px;
 }
 
 * { box-sizing: border-box; }
@@ -207,7 +207,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .round-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
 .round-btn.danger { color: var(--red); }
 .round-btn.danger:hover { background: var(--red-soft); }
-.editor { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+.editor { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
 
 /* title box */
 .paper-title {
