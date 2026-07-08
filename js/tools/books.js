@@ -8,7 +8,7 @@
  *              and a cover built from its ISBN via Open Library. Lists are
  *              saved and any book can be added to the Library.
  * Data (plain, not encrypted):
- *   "data"    → [{ id, title, image, recommendedBy, status, updatedAt }]
+ *   "data"    → [{ id, title, author, image, recommendedBy, status, updatedAt }]
  *   "authors" → [{ id, label, books: [{ title, author, isbn, image, note }], updatedAt }]
  *               books array order = ranking (first = read first) */
 window.BooksTool = function mount(container, ctx) {
@@ -101,6 +101,7 @@ window.BooksTool = function mount(container, ctx) {
       h("button", { class: "book-main", title: "Edit book", onclick: () => renderForm(b) },
         cover(b.image, b.title, "book-cover"),
         h("div", { class: "book-title" }, b.title || "Untitled"),
+        b.author ? h("div", { class: "book-author" }, b.author) : null,
         b.recommendedBy
           ? h("div", { class: "book-rec" }, icon("person"), " " + b.recommendedBy)
           : null
@@ -128,9 +129,10 @@ window.BooksTool = function mount(container, ctx) {
   function renderForm(existing) {
     clear(container);
 
-    const title = h("input", { class: "field", placeholder: "Title", value: existing ? existing.title : "" });
-    const image = h("input", { class: "field", placeholder: "Cover image URL (optional)", value: existing && existing.image ? existing.image : "" });
-    const rec   = h("input", { class: "field", placeholder: "Recommended by (optional)", value: existing && existing.recommendedBy ? existing.recommendedBy : "" });
+    const title  = h("input", { class: "field", placeholder: "Title", value: existing ? existing.title : "" });
+    const author = h("input", { class: "field", placeholder: "Author (optional)", value: existing && existing.author ? existing.author : "" });
+    const image  = h("input", { class: "field", placeholder: "Cover image URL (optional)", value: existing && existing.image ? existing.image : "" });
+    const rec    = h("input", { class: "field", placeholder: "Recommended by (optional)", value: existing && existing.recommendedBy ? existing.recommendedBy : "" });
 
     let status = existing ? existing.status : "toread";
     const statusRow = h("div", { class: "status-choice" });
@@ -156,12 +158,13 @@ window.BooksTool = function mount(container, ctx) {
       }
       if (existing) {
         existing.title = title.value.trim();
+        existing.author = author.value.trim();
         existing.image = image.value.trim();
         existing.recommendedBy = rec.value.trim();
         existing.status = status;
         existing.updatedAt = Date.now();
       } else {
-        addToLibrary(title.value.trim(), image.value.trim(), rec.value.trim(), status);
+        addToLibrary(title.value.trim(), author.value.trim(), image.value.trim(), rec.value.trim(), status);
       }
       persistBooks();
       render();
@@ -181,17 +184,18 @@ window.BooksTool = function mount(container, ctx) {
     container.appendChild(h("div", { class: "book-form" }, top,
       h("div", { class: "card-panel" },
         h("div", { class: "panel-title" }, existing ? "Edit book" : "New book"),
-        title, image, rec, statusRow, save, msg
+        title, author, image, rec, statusRow, save, msg
       )
     ));
     title.addEventListener("keydown", (e) => { if (e.key === "Enter") submit(); });
     setTimeout(() => title.focus(), 30);
   }
 
-  function addToLibrary(title, image, recommendedBy, status) {
+  function addToLibrary(title, author, image, recommendedBy, status) {
     books.push({
       id: "b" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
       title: title,
+      author: author || "",
       image: image || "",
       recommendedBy: recommendedBy || "",
       status: status || "toread",
@@ -298,7 +302,7 @@ window.BooksTool = function mount(container, ctx) {
     }, added ? "✓ In list" : "Add");
     if (!added) {
       addBtn.addEventListener("click", () => {
-        addToLibrary(b.title, b.image, "Claude", "toread");
+        addToLibrary(b.title, b.author || "", b.image, "Claude", "toread");
         persistBooks();
         render();
       });
