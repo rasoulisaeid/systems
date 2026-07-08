@@ -23,4 +23,11 @@ window.TOOLS = [
     accent: "#8b5cf6",
     mount: window.NotesTool,
   },
+  {
+    id: "books",
+    name: "Books",
+    icon: "📚",
+    accent: "#1cb0f6",
+    mount: window.BooksTool,
+  },
 ];

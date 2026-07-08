@@ -136,9 +136,32 @@
       }
     });
 
+    /* Claude API key (used by the Books → Authors section) */
+    const keyPanel = el("div", { class: "card-panel" });
+    keyPanel.appendChild(el("div", { class: "panel-title", text: "Claude API key" }));
+    const keyMsg = el("p", { class: "form-msg" });
+    const existing = window.Store.get("claude:apiKey", "");
+    const keyInput = el("input", {
+      type: "password", class: "field", autocomplete: "off",
+      placeholder: existing ? "Saved (" + existing.slice(0, 10) + "…) — paste to replace" : "sk-ant-…",
+    });
+    const keyBtn = el("button", { class: "btn primary", text: existing ? "Update key" : "Save key" });
+    keyBtn.addEventListener("click", () => {
+      const k = keyInput.value.trim();
+      if (!k) { keyMsg.textContent = "Paste an API key."; keyMsg.className = "form-msg err"; return; }
+      window.Store.set("claude:apiKey", k);
+      keyMsg.textContent = "API key saved.";
+      keyMsg.className = "form-msg ok";
+      keyInput.value = "";
+      keyInput.placeholder = "Saved (" + k.slice(0, 10) + "…) — paste to replace";
+      keyBtn.textContent = "Update key";
+    });
+    keyPanel.appendChild(keyInput); keyPanel.appendChild(keyBtn); keyPanel.appendChild(keyMsg);
+
     const wrap = el("div", { class: "settings" },
       el("h1", { class: "page-title", text: "Settings" }),
-      panel
+      panel,
+      keyPanel
     );
     if (has && window.Vault.isUnlocked()) {
       const lockBtn = el("button", { class: "btn ghost lock-now", text: "Lock notes now" });
